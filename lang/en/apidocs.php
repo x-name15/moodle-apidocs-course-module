@@ -46,3 +46,7 @@ $string['requiredspecfile'] = 'You must upload a spec file (.yaml/.yml/.json)';
 $string['privacy:metadata'] = 'The API Docs plugin stores files uploaded by users.';
 $string['apidocs:addinstance'] = 'Add a new API Docs instance';
 $string['apidocs:view'] = 'View API Docs content';
+$string['btn_preview'] = 'Preview';
+$string['btn_raw'] = 'Raw Code';
+$string['btn_copy'] = 'Copy';
+$string['msg_copied'] = 'Copied!';
