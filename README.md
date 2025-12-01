@@ -27,13 +27,13 @@ We loved how GitLab detects a `swagger.yaml` or `openapi.json` file in a reposit
 1.  **AsyncAPI (v2.0 - v3.0):**
     * Renders utilizing the *AsyncAPI React Component*.
     * Supports complex schemas and event-driven definitions.
-**Example**
+- **Example**
     ![AsyncAPI Example](image-examples/async.example.png)
 
 2.  **OpenAPI (Swagger v3):**
     * Renders using *Swagger UI*.
     * Interactive "Try it out" functionality (if the API endpoint is accessible).
-**Example:**
+- **Example:**
     ![OpenAPI Example](image-examples/open.example.png)
 
 3.  **Markdown (.md):**
