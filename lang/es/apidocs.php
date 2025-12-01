@@ -46,3 +46,7 @@ $string['requiredspecfile'] = 'Debes subir un archivo de especificación (.yaml/
 $string['privacy:metadata'] = 'El plugin API Docs almacena archivos subidos por usuarios.';
 $string['apidocs:addinstance'] = 'Agregar nueva instancia de Documentación API';
 $string['apidocs:view'] = 'Ver contenido de Documentación API';
+$string['btn_preview'] = 'Vista Previa';
+$string['btn_raw'] = 'Código Fuente';
+$string['btn_copy'] = 'Copiar';
+$string['msg_copied'] = '¡Copiado!';
