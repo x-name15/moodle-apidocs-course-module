@@ -27,15 +27,20 @@ We loved how GitLab detects a `swagger.yaml` or `openapi.json` file in a reposit
 1.  **AsyncAPI (v2.0 - v3.0):**
     * Renders utilizing the *AsyncAPI React Component*.
     * Supports complex schemas and event-driven definitions.
+**Example**
+    ![AsyncAPI Example](image-examples/async.example.png)
+
 2.  **OpenAPI (Swagger v3):**
     * Renders using *Swagger UI*.
     * Interactive "Try it out" functionality (if the API endpoint is accessible).
+**Example:**
+    ![OpenAPI Example](image-examples/open.example.png)
+
 3.  **Markdown (.md):**
     * Renders GitHub-Flavored Markdown.
     * Perfect for Readmes, changelogs, and general technical guides.
 
 ## 🛠 Installation
-
 1.  Clone this repository into your Moodle `mod/` directory:
     ```bash
     git clone [https://github.com/x-name15/moodle-apidocs-course-module.git](https://github.com/x-name15/moodle-apidocs-course-module.git) mod/apidocs
@@ -44,11 +49,7 @@ We loved how GitLab detects a `swagger.yaml` or `openapi.json` file in a reposit
 3.  Run the database upgrade/installation process.
 
 ## 🤝 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-
+Pull requests are welcome, always :D
 
 ## 📝 License
-
 Licensed under the [GNU General Public License v3](http://www.gnu.org/copyleft/gpl.html).
