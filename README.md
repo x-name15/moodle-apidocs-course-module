@@ -20,6 +20,7 @@ We loved how GitLab detects a `swagger.yaml` or `openapi.json` file in a reposit
 
 * **Offline First / Privacy Focused:** Unlike other plugins that rely on CDNs (unpkg/jsdelivr), this plugin injects the rendering engines (React, AsyncAPI Standalone, Swagger UI) directly from the server's local storage. It works perfectly in **Intranets** or air-gapped environments.
 * **AsyncAPI v3 Support:** Native support for the latest Event-Driven Architecture specifications (Kafka, MQTT, WebSockets) using the official React Standalone component.
+* * **GitLab-Style Toolbar:** Switch instantly between the **Rendered View** (Visual) and **Raw Code** (YAML/JSON) with a single click.
 * **Clean UI:** Removes Moodle's standard clutter (navigation blocks, footers, completion buttons) to provide a "Full Focus" reading mode, similar to professional documentation sites.
 
 ## 📄 Supported Formats
