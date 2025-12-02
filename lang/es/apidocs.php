@@ -50,3 +50,4 @@ $string['btn_preview'] = 'Vista Previa';
 $string['btn_raw'] = 'Código Fuente';
 $string['btn_copy'] = 'Copiar';
 $string['msg_copied'] = '¡Copiado!';
+$string['search_placeholder'] = 'Buscar...'; 

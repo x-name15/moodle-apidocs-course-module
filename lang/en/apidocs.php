@@ -50,3 +50,4 @@ $string['btn_preview'] = 'Preview';
 $string['btn_raw'] = 'Raw Code';
 $string['btn_copy'] = 'Copy';
 $string['msg_copied'] = 'Copied!';
+$string['search_placeholder'] = 'Search...'; 

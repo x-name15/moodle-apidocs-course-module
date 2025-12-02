@@ -29,4 +29,4 @@ $plugin->version = 2025120104;
 $plugin->pix = 'icon';
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '1.2.0';
+$plugin->release = '0.2.0';
