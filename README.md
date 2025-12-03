@@ -41,7 +41,7 @@ We loved how GitLab detects a spec file and simply *renders* it ("zero-friction"
 ### **Example for Swagger UI:**
    ![OpenAPI Example](image-examples/open.example.png)
 
-### **Example for Swagger UI:**
+### **Example for Redoc:**
    ![Redoc Example](image-examples/redoc.example.png)
 
 3.  **Markdown (.md):**
