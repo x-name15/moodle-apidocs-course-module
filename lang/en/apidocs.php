@@ -46,8 +46,12 @@ $string['requiredspecfile'] = 'You must upload a spec file (.yaml/.yml/.json)';
 $string['privacy:metadata'] = 'The API Docs plugin stores files uploaded by users.';
 $string['apidocs:addinstance'] = 'Add a new API Docs instance';
 $string['apidocs:view'] = 'View API Docs content';
+// Interface buttons
 $string['btn_preview'] = 'Preview';
 $string['btn_raw'] = 'Raw Code';
 $string['btn_copy'] = 'Copy';
 $string['msg_copied'] = 'Copied!';
 $string['search_placeholder'] = 'Search...'; 
+// Dual engine for OpenAPI
+$string['btn_switch_redoc'] = 'Use Redoc';
+$string['btn_switch_swagger'] = 'Use Swagger';

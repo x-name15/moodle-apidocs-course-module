@@ -46,8 +46,12 @@ $string['requiredspecfile'] = 'Debes subir un archivo de especificación (.yaml/
 $string['privacy:metadata'] = 'El plugin API Docs almacena archivos subidos por usuarios.';
 $string['apidocs:addinstance'] = 'Agregar nueva instancia de Documentación API';
 $string['apidocs:view'] = 'Ver contenido de Documentación API';
+// Botones de la interfaz
 $string['btn_preview'] = 'Vista Previa';
 $string['btn_raw'] = 'Código Fuente';
 $string['btn_copy'] = 'Copiar';
 $string['msg_copied'] = '¡Copiado!';
-$string['search_placeholder'] = 'Buscar...'; 
+$string['search_placeholder'] = 'Buscar...';
+// Dual engine para OpenAPI
+$string['btn_switch_redoc'] = 'Usar Redoc';
+$string['btn_switch_swagger'] = 'Usar Swagger';

@@ -23,7 +23,6 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/apidocs:view', $context);
 
-// 1. OBTENER ARCHIVO
 $fs = get_file_storage();
 $files = $fs->get_area_files($context->id, 'mod_apidocs', 'spec', 0, 'filename', false);
 if (empty($files)) {
@@ -36,11 +35,10 @@ $userfile = reset($files);
 $filename = $userfile->get_filename();
 $specContent = $userfile->get_content();
 
-// Detección
 $isAsync = (strpos($specContent, 'asyncapi:') !== false) || (strpos(strtolower($filename), 'asyncapi') !== false);
 $isMd = (substr(strtolower($filename), -3) === '.md');
+$isOpenApi = !$isAsync && !$isMd; // Si no es Async ni Markdown, es OpenAPI
 
-// Helper Local
 function getLocalContent($filename) {
     global $CFG;
     $path = $CFG->dirroot . '/mod/apidocs/static/' . $filename;
@@ -51,22 +49,21 @@ function getLocalContent($filename) {
     return "console.warn('MISSING LOCAL FILE: $filename');";
 }
 
-// RECUPERAR IDIOMAS DEL SISTEMA
-$currentLang = current_language(); // ej: 'es', 'en'
-$strPreview  = get_string('btn_preview', 'mod_apidocs');
-$strRaw      = get_string('btn_raw', 'mod_apidocs');
-$strCopy     = get_string('btn_copy', 'mod_apidocs');
-$strCopied   = get_string('msg_copied', 'mod_apidocs');
-$strSearch   = get_string('search_placeholder', 'mod_apidocs');
+function get_safe_string($identifier, $component, $default) {
+    if (get_string_manager()->string_exists($identifier, $component)) {
+        return get_string($identifier, $component);
+    }
+    return $default;
+}
 
-// Fallback por si la caché de idiomas falla
-if (strpos($strPreview, '[[') !== false) $strPreview = 'Preview';
-if (strpos($strRaw, '[[') !== false) $strRaw = 'Source';
-if (strpos($strSearch, '[[') !== false) $strSearch = 'Search...';
+$strPreview = get_safe_string('btn_preview', 'mod_apidocs', 'Preview');
+$strRaw     = get_safe_string('btn_raw', 'mod_apidocs', 'Source');
+$strCopy    = get_safe_string('btn_copy', 'mod_apidocs', 'Copy');
+$strCopied  = get_safe_string('msg_copied', 'mod_apidocs', 'Copied!');
+$strSearch  = get_safe_string('search_placeholder', 'mod_apidocs', 'Search...');
+$strToRedoc = get_safe_string('btn_switch_redoc', 'mod_apidocs', 'Use Redoc');
+$strToSwag  = get_safe_string('btn_switch_swagger', 'mod_apidocs', 'Use Swagger');
 
-// ===========================================================================
-// MODO PLAYER (IFRAME ASYNCAPI)
-// ===========================================================================
 if ($action === 'player' && $isAsync) {
     while (ob_get_level()) ob_end_clean();
 
@@ -80,7 +77,7 @@ if ($action === 'player' && $isAsync) {
 
     ?>
     <!DOCTYPE html>
-    <html lang="<?php echo $currentLang; ?>">
+    <html lang="<?php echo current_language(); ?>">
     <head>
         <meta charset="UTF-8">
         <title>AsyncAPI Viewer</title>
@@ -141,9 +138,6 @@ if ($action === 'player' && $isAsync) {
     exit;
 }
 
-// ===========================================================================
-// VISTA PRINCIPAL (MOODLE WRAPPER)
-// ===========================================================================
 $PAGE->set_url('/mod/apidocs/view.php', ['id'=>$id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
@@ -158,41 +152,59 @@ echo "<style>
 
     #doc-wrapper { width: 100%; max-width: 100%; margin-top: 15px; background: #fff; border: 1px solid #d0d7de; border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; height: 85vh; min-height: 600px; }
     
-    /* Toolbar */
+    /* TOOLBAR COMPACTA (SLIM) */
     .local-toolbar {
-        background: #fdfdfd; border-bottom: 1px solid #e5e5e5; padding: 0 15px; height: 50px;
+        background: #fdfdfd; border-bottom: 1px solid #e5e5e5; padding: 0 10px; height: 40px; /* Altura reducida */
         display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;
         transition: background 0.3s, border 0.3s;
     }
     .local-btn {
-        background: #fff; border: 1px solid #dcdcdc; border-radius: 6px; padding: 5px 12px;
-        font-size: 13px; font-weight: 600; cursor: pointer; color: #333; margin-right: 5px;
+        background: #fff; border: 1px solid #dcdcdc; border-radius: 4px; 
+        padding: 2px 10px; /* Padding reducido */
+        font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif !important; 
+        font-size: 12px !important; /* Letra pequeña */
+        line-height: 22px !important; 
+        font-weight: 500; cursor: pointer; color: #24292e; margin-right: 5px;
+        display: inline-flex; align-items: center; justify-content: center; height: 26px; /* Altura botón */
         transition: all 0.2s;
     }
     .local-btn:hover { background: #f3f4f6; border-color: #1b1f2426; }
     .local-btn.active { background: #0969da; color: #fff; border-color: #0969da; }
     
-    /* Search Box */
-    .search-box { position: relative; display: inline-block; margin-right: 10px; }
+    /* Search Box Compact */
+    .search-box { position: relative; display: inline-flex; align-items: center; margin-right: 10px; }
     #main-search { 
-        padding: 5px 10px; border: 1px solid #d0d7de; border-radius: 6px; width: 220px; font-size: 13px; 
+        padding: 2px 8px; border: 1px solid #d0d7de; border-radius: 4px; width: 180px; 
+        font-size: 12px !important; height: 26px; outline: none;
     }
     
     #content-container { flex: 1; overflow: hidden; position: relative; background: #fff; }
+    
+    /* Viewers */
     #viewer-root { height: 100%; overflow-y: auto; transition: filter 0.3s; }
-    #raw-content { display: none; padding: 20px; background: #f6f8fa; height: 100%; overflow: auto; box-sizing: border-box; }
-    #raw-content pre { margin: 0; font-family: monospace; white-space: pre-wrap; font-size: 13px; }
+    #redoc-root { height: 100%; overflow-y: auto; display: none; background: #fff; transition: filter 0.3s; }
     #doc-frame { width: 100%; height: 100%; border: none; display: block; transition: filter 0.3s; }
 
-    /* Dark Mode */
+    /* RAW VIEW */
+    #raw-content { 
+        display: none; padding: 15px; background: #f6f8fa; height: 100%; overflow: auto; box-sizing: border-box; 
+        color: #24292e; 
+    }
+    #raw-content pre { margin: 0; font-family: 'SFMono-Regular', Consolas, monospace; white-space: pre-wrap; font-size: 12px; }
+
+    /* --- DARK MODE --- */
     .doc-dark-mode .local-toolbar { background: #161b22; border-bottom: 1px solid #30363d; }
     .doc-dark-mode #doc-wrapper { border-color: #30363d; background: #0d1117; }
     .doc-dark-mode .local-btn { background: #21262d; border-color: #363b42; color: #c9d1d9; }
-    .doc-dark-mode .local-btn:hover { background: #30363d; }
-    .doc-dark-mode .local-btn.active { background: #1f6feb; border-color: #1f6feb; color: #fff; }
+    .doc-dark-mode .local-btn:hover { background: #30363d; border-color: #8b949e; }
+    .doc-dark-mode .local-btn.active { background: #1f6feb; border-color: #1f6feb; color: #f0f6fc; }
     .doc-dark-mode #main-search { background: #0d1117; border-color: #30363d; color: #c9d1d9; }
-    .doc-dark-mode #viewer-root, .doc-dark-mode #doc-frame { filter: invert(0.92) hue-rotate(180deg); }
-    .doc-dark-mode #raw-content { background: #0d1117; color: #c9d1d9; }
+    
+    /* Contenido Dark */
+    .doc-dark-mode #raw-content { background: #0d1117 !important; color: #c9d1d9 !important; }
+    .doc-dark-mode #viewer-root, .doc-dark-mode #redoc-root, .doc-dark-mode #doc-frame { 
+        filter: invert(0.92) hue-rotate(180deg); 
+    }
     .doc-dark-mode img { filter: invert(1) hue-rotate(180deg); }
 
     @media (min-width: 768px) { #region-main, .region-main-content { width: 100% !important; max-width: 100% !important; padding: 0 !important; } }
@@ -204,9 +216,13 @@ echo '<div id="doc-wrapper">';
 echo '<div class="local-toolbar">
         <div style="display:flex; align-items:center;">
             <button id="btn-main-render" class="local-btn active" onclick="toggleMainView(\'render\')">👁️ '.$strPreview.'</button>
-            <button id="btn-main-raw" class="local-btn" onclick="toggleMainView(\'raw\')">💻 '.$strRaw.'</button>
-            
-            <div class="search-box">
+            <button id="btn-main-raw" class="local-btn" onclick="toggleMainView(\'raw\')">💻 '.$strRaw.'</button>';
+
+if ($isOpenApi) {
+    echo '<button id="btn-engine-switch" class="local-btn" onclick="toggleEngine()" style="margin-left:10px; border-color:#0969da; color:#0969da;">🔄 '.$strToRedoc.'</button>';
+}
+
+echo '      <div class="search-box">
                 <input type="text" id="main-search" placeholder="'.$strSearch.'" onkeypress="handleSearchKey(event)">
             </div>
         </div>
@@ -218,11 +234,11 @@ echo '<div class="local-toolbar">
 
 echo '<div id="content-container">';
 
-// CONTENIDO
 if ($isAsync) {
     $playerUrl = new moodle_url('/mod/apidocs/view.php', ['id' => $id, 'action' => 'player']);
     echo '<iframe id="doc-frame" src="' . $playerUrl->out(false) . '"></iframe>';
 } else {
+    // Assets OpenAPI/MD
     $mdCss = $CFG->dirroot . '/mod/apidocs/static/markdown.css';
     $swCss = $CFG->dirroot . '/mod/apidocs/static/swagger.css';
     echo "<style>";
@@ -235,9 +251,11 @@ if ($isAsync) {
         echo "<script>" . getLocalContent('marked.js') . "</script>";
     } else {
         echo "<script>" . getLocalContent('swagger.js') . "</script>";
+        echo "<script>" . getLocalContent('redoc.js') . "</script>";
     }
 
     echo '<div id="viewer-root"></div>';
+    if ($isOpenApi) echo '<div id="redoc-root"></div>';
 }
 
 echo '<div id="raw-content"><pre>' . htmlspecialchars($specContent) . '</pre></div>';
@@ -246,38 +264,98 @@ echo '</div></div>';
 $safeContent = json_encode($specContent);
 $isMdBool = $isMd ? 'true' : 'false';
 $isAsyncBool = $isAsync ? 'true' : 'false';
+$isOpenApiBool = $isOpenApi ? 'true' : 'false';
 $strCopiedJs = $strCopied; 
 $strCopyJs = $strCopy;
+$strToRedocJs = $strToRedoc;
+$strToSwagJs = $strToSwag;
 
-// --- JS FUNCIONALIDAD ---
 echo "<script>
     const isAsync = $isAsyncBool;
+    const isOpenApi = $isOpenApiBool;
     const strCopied = '$strCopiedJs';
     const strCopy = '$strCopyJs';
+    const strToRedoc = '$strToRedocJs';
+    const strToSwag = '$strToSwagJs';
+    const specContent = $safeContent;
+    
+    let currentEngine = 'swagger';
+    let redocInitialized = false;
 
     function toggleMainView(mode) {
-        const viewer = isAsync ? document.getElementById('doc-frame') : document.getElementById('viewer-root');
+        const viewer = document.getElementById('viewer-root');
+        const redoc = document.getElementById('redoc-root');
         const raw = document.getElementById('raw-content');
+        const iframe = document.getElementById('doc-frame');
+        
         const btnRender = document.getElementById('btn-main-render');
         const btnRaw = document.getElementById('btn-main-raw');
+        const btnSwitch = document.getElementById('btn-engine-switch');
 
         if(mode === 'render') {
-            if(viewer) viewer.style.display = 'block';
+            if(isAsync) {
+                iframe.style.display = 'block';
+            } else {
+                if(currentEngine === 'swagger') {
+                    viewer.style.display = 'block';
+                    if(redoc) redoc.style.display = 'none';
+                } else {
+                    viewer.style.display = 'none';
+                    if(redoc) redoc.style.display = 'block';
+                }
+            }
             raw.style.display = 'none';
             btnRender.classList.add('active'); btnRaw.classList.remove('active');
+            if(btnSwitch) btnSwitch.style.display = 'inline-flex';
         } else {
-            if(viewer) viewer.style.display = 'none';
+            if(isAsync) iframe.style.display = 'none';
+            else {
+                viewer.style.display = 'none';
+                if(redoc) redoc.style.display = 'none';
+            }
             raw.style.display = 'block';
             btnRender.classList.remove('active'); btnRaw.classList.add('active');
+            if(btnSwitch) btnSwitch.style.display = 'none';
+        }
+    }
+
+    function toggleEngine() {
+        if (!isOpenApi) return;
+        const viewer = document.getElementById('viewer-root');
+        const redoc = document.getElementById('redoc-root');
+        const btn = document.getElementById('btn-engine-switch');
+
+        if (currentEngine === 'swagger') {
+            viewer.style.display = 'none';
+            redoc.style.display = 'block';
+            btn.innerText = '🔄 ' + strToSwag;
+            currentEngine = 'redoc';
+
+            if (!redocInitialized) {
+                if (typeof Redoc !== 'undefined') {
+                    let specObj = null;
+                    try { specObj = jsyaml.load(specContent); } catch(e) {}
+                    Redoc.init(specObj || specContent, {
+                        scrollYOffset: 50,
+                        disableSearch: true
+                    }, document.getElementById('redoc-root'));
+                    redocInitialized = true;
+                } else {
+                    alert('Redoc library not found.');
+                }
+            }
+        } else {
+            redoc.style.display = 'none';
+            viewer.style.display = 'block';
+            btn.innerText = '🔄 ' + strToRedoc;
+            currentEngine = 'swagger';
         }
     }
 
     function copyMainCode() {
-        const content = $safeContent;
-        navigator.clipboard.writeText(content).then(() => {
+        navigator.clipboard.writeText(specContent).then(() => {
             const btn = document.getElementById('btn-main-copy');
-            const originalText = btn.innerText;
-            const icon = originalText.split(' ')[0] || '📋'; 
+            const icon = btn.innerText.split(' ')[0] || '📋'; 
             btn.innerText = '✅ ' + strCopied;
             setTimeout(() => btn.innerText = icon + ' ' + strCopy, 2000);
         });
@@ -290,10 +368,9 @@ echo "<script>
         btn.innerText = wrapper.classList.contains('doc-dark-mode') ? '☀️' : '🌙';
     }
 
-    // --- LÓGICA DE BÚSQUEDA TIPO F3 ---
     function handleSearchKey(e) {
         if(e.key === 'Enter') {
-            e.preventDefault(); // Evitar submit
+            e.preventDefault(); 
             performSearch();
         }
     }
@@ -303,17 +380,12 @@ echo "<script>
         if (!term) return;
 
         if (isAsync) {
-            // Caso AsyncAPI (Iframe)
             const iframe = document.getElementById('doc-frame');
             if (iframe && iframe.contentWindow) {
                 iframe.contentWindow.focus(); 
-                // find(text, caseSensitive, backwards, wrapAround)
-                // Ejecutarlo repetidamente busca la siguiente ocurrencia
                 iframe.contentWindow.find(term, false, false, true);
             }
         } else {
-            // Caso Local (OpenAPI/MD)
-            // window.find() busca la siguiente ocurrencia cada vez que se llama
             window.find(term, false, false, true);
         }
     }
