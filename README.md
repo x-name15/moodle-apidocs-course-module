@@ -33,17 +33,22 @@ We loved how GitLab detects a spec file and simply *renders* it ("zero-friction"
 ### **Example**
    ![AsyncAPI Example](image-examples/async.example.png)
 
-2.  **OpenAPI (Swagger v3):**
+2.  **OpenAPI (Swagger v3 and Redoc):**
     * **Dual Engine Support:**
         * **Swagger UI:** Interactive "Try it out" functionality.
         * **Redoc:** Three-column layout, perfect for deep reading and documentation study.
     * Users can switch views instantly via the toolbar.
-### **Example:**
+### **Example for Swagger UI:**
    ![OpenAPI Example](image-examples/open.example.png)
+
+### **Example for Swagger UI:**
+   ![Redoc Example](image-examples/redoc.example.png)
 
 3.  **Markdown (.md):**
     * Renders GitHub-Flavored Markdown.
     * Perfect for Readmes, changelogs, and general technical guides.
+### **Example:**
+   ![Markdown Example](image-examples/markdown.example.png)
 
 ## 🛠 Installation
 
