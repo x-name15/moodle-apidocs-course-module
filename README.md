@@ -12,16 +12,18 @@ We wanted to bring the developer experience (DX) directly into the course. Stude
 
 ### 💡 The Inspiration
 
-Our main inspiration was the **GitLab default OpenAPI viewer**. 
+Our main inspiration was the **GitLab default OpenAPI viewer** and professional IDEs like **WebStorm**.
 
-We loved how GitLab detects a `swagger.yaml` or `openapi.json` file in a repository and simply *renders* it. It's clean, native, and immediate. We wanted to replicate that "zero-friction" experience inside Moodle activities: you upload the spec, Moodle renders the documentation. Simple.
+We loved how GitLab detects a spec file and simply *renders* it ("zero-friction"). We also loved how WebStorm allows developers to switch between different visualization engines. We brought both concepts into Moodle: you upload the spec, Moodle renders the documentation. Simple.
+
 
 ## 🚀 Key Features
 
-* **Offline First / Privacy Focused:** Unlike other plugins that rely on CDNs (unpkg/jsdelivr), this plugin injects the rendering engines (React, AsyncAPI Standalone, Swagger UI) directly from the server's local storage. It works perfectly in **Intranets** or air-gapped environments.
+* **Offline First / Privacy Focused:** Unlike other plugins that rely on CDNs (unpkg/jsdelivr), this plugin injects the rendering engines (React, AsyncAPI Standalone, Swagger UI, Redoc) directly from the server's local storage. It works perfectly in **Intranets** or air-gapped environments.
+* **OpenAPI Dual Engine:** Why choose between? We implemented a **Smart Switcher** that allows users to toggle instantly between **Swagger UI** and **Redoc**, similar to professional IDEs.
 * **AsyncAPI v3 Support:** Native support for the latest Event-Driven Architecture specifications (Kafka, MQTT, WebSockets) using the official React Standalone component.
-* **GitLab-Style Toolbar:** Switch instantly between the **Rendered View** (Visual) and **Raw Code** (YAML/JSON) with a single click.
-* **Clean UI:** Removes Moodle's standard clutter (navigation blocks, footers, completion buttons) to provide a "Full Focus" reading mode, similar to professional documentation sites.
+* **GitLab-Style Toolbar:** Switch instantly between the **Rendered View** (Visual) and **Raw Code** (YAML/JSON) with a single click. Also includes Dark Mode and Copy-to-Clipboard functionality.
+* **Clean UI:** Removes Moodle's standard clutter (navigation blocks, footers, completion buttons) to provide a "Full Focus" reading mode.
 
 ## 📄 Supported Formats
 
@@ -31,17 +33,25 @@ We loved how GitLab detects a `swagger.yaml` or `openapi.json` file in a reposit
 ### **Example**
    ![AsyncAPI Example](image-examples/async.example.png)
 
-2.  **OpenAPI (Swagger v3):**
-    * Renders using *Swagger UI*.
-    * Interactive "Try it out" functionality (if the API endpoint is accessible).
-### **Example:**
+2.  **OpenAPI (Swagger v3 and Redoc):**
+    * **Dual Engine Support:**
+        * **Swagger UI:** Interactive "Try it out" functionality.
+        * **Redoc:** Three-column layout, perfect for deep reading and documentation study.
+    * Users can switch views instantly via the toolbar.
+### **Example for Swagger UI:**
    ![OpenAPI Example](image-examples/open.example.png)
+
+### **Example for Redoc:**
+   ![Redoc Example](image-examples/redoc.example.png)
 
 3.  **Markdown (.md):**
     * Renders GitHub-Flavored Markdown.
     * Perfect for Readmes, changelogs, and general technical guides.
+### **Example:**
+   ![Markdown Example](image-examples/markdown.example.png)
 
 ## 🛠 Installation
+
 1.  Clone this repository into your Moodle `mod/` directory:
     ```bash
     git clone [https://github.com/x-name15/moodle-apidocs-course-module.git](https://github.com/x-name15/moodle-apidocs-course-module.git) mod/apidocs
@@ -50,7 +60,9 @@ We loved how GitLab detects a `swagger.yaml` or `openapi.json` file in a reposit
 3.  Run the database upgrade/installation process.
 
 ## 🤝 Contributing
+
 Pull requests are welcome, always :D
 
 ## 📝 License
+
 Licensed under the [GNU General Public License v3](http://www.gnu.org/copyleft/gpl.html).
